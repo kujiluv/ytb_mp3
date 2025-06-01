@@ -14,17 +14,19 @@ print("\033[0m")
 
 print("URL YouTube : ")
 url = readline()
-print("Folder install ( blank = output folder ) :")
+print("Folder install (blank = folder ./output) :")
 dest = readline()
 if isempty(dest)
-    dest = get(config, "dir", ".")
+    dest = get(config, "dir", "./output")
+    println("\033[38;2;255;105;180mno folder specified, using default folder : $dest\033[0m")
 end
 
 if !isdir(dest)
     try
         mkpath(dest)
+        println("create folder : $dest")
     catch
-        println("Erreur : impossible de créer le dossier de sortie : $dest")
+        println("error: cant create folder : $dest. please verify permissions or path.")
         exit(1)
     end
 end
@@ -33,16 +35,11 @@ default_audio_format = get(config, "default_audio_format", "mp3")
 
 function youtube_to_mp3(url::String; output_dir::String = ".", audio_format::String = "mp3")
     output_template = joinpath(output_dir, "%(title)s.%(ext)s")
-    cmd = `yt-dlp --extract-audio --audio-format $audio_format -o $output_template --print after_move:filepath $url --quiet`
+    cmd = `yt-dlp --extract-audio --audio-format $audio_format -o $output_template --progress --verbose $url`
     try
-        filename = strip(read(cmd, String))
-        if isfile(filename)
-            println(basename(filename))
-        else
-            println(basename(filename))
-        end
+        run(cmd) 
     catch e
-        println("Erreur lors du téléchargement : ", e)
+        println("error: download : ", e)
     end
 end
 
