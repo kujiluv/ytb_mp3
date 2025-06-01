@@ -1,0 +1,6 @@
+dir = "./output"
+default_audio_format = "mp3"
+default_quality = "192k"
+default_filename_template = "%(title)s.%(ext)s"
+default_download_mode = "audio"
+default_history_file = "history.log"
